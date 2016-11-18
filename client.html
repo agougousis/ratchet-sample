@@ -1,0 +1,52 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="http://autobahn.s3.amazonaws.com/js/autobahn.min.js"></script>
+
+<script>
+    
+    var wampIp = 'put_your_server_ip_here';
+    var wampPort = '8088';
+    var wampHostname = 'ratchet.gr';
+    
+    function connectToService(){
+        // We open a websocket to service's <IP>:<port> and when the connection
+        // is established we subscribe through the callback function
+        var conn = new ab.Session('ws://'+wampIp+':'+wampPort,
+            function() {
+                // Subscribe for 'newsTopic' topic. We pass a callback function
+                // to be executed when a message is broadcasted to this websocket
+                conn.subscribe('newsTopic', function(topic, data) {
+                    // Check the message content to see what this message is about
+                    if(data.about == 'subscribers'){
+                        console.log('Subscribers: ' + data.subscribers);  
+                    } else {
+                        console.log('New post for "' + topic + '" ('+data.when+'): ' + data.subscribers);  
+                    }                               
+                });
+            },
+            function() {
+                console.warn('WebSocket connection closed');
+            },
+            {'skipSubprotocolCheck': true}
+        );
+    }     
+    
+    // Make a request to get the service status
+    $.ajax({
+        url: 'http://'+wampHostname+'/enable_wamp_server.php',
+        type: 'GET',
+        dataType: 'json',
+        async: false,
+        success: function( data ) {
+            if(data.server_status == 'on'){
+                // Since the service is up, connect to receive news
+                connectToService();
+            } else {
+                alert('Monitoring service is not active!');
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert('Monitoring service could not be started!');                        
+        }
+    });           
+    
+</script>

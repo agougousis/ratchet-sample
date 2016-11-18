@@ -1,0 +1,12 @@
+{
+    "autoload": {
+        "psr-4": {
+            "MyApp\\": "MyApp/src/MyApp"            
+        }
+    },
+    "require": {
+        "cboden/ratchet": "0.3.*",
+        "paragonie/constant_time_encoding": "^1.0"
+    }
+}
+
