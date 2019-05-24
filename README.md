@@ -44,7 +44,7 @@ A yml configuration file for docker-compose has been added to help you setup the
 * Check out the messages printed in the developer tools'console.
 * Open the same URL in another browser and check the console of both browsers.
 
-### Example (I am using ratchet.gr as hostname)
+### Example (using Docker)
 
 We open Firefox at http://localhost/client.html . The client initiates WAMP server's boot up and subscribes. The WAMP server immediately broadcasts the number of total subscribers (only this client for the moment). You can see below a screenshot of Firebug console panel a few seconds after the initial HTTP request. 
 
