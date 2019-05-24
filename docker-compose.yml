@@ -1,0 +1,12 @@
+version: '3'
+services:
+    web:
+        container_name: "web-container"
+        image: nimmis/apache-php7:latest
+        restart: always
+        network_mode: "bridge"
+        ports:
+            - "80:80"
+            - "8088:8088"
+        volumes:
+            - .:/var/www/html

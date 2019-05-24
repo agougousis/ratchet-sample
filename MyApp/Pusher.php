@@ -1,6 +1,7 @@
 <?php
 
 namespace MyApp;
+
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\WampServerInterface;
 
@@ -14,7 +15,6 @@ class Pusher implements WampServerInterface {
 
     protected $total_subscribers = 0;
     protected $stopCallback;
-
 
     public function __construct($stopServerCallback) {
         $this->stopCallback = $stopServerCallback;
@@ -121,13 +121,18 @@ class Pusher implements WampServerInterface {
      *
      * @param ConnectionInterface $conn
      * @param Topic $topic
-     * @param string $event
+     * @param string $payload
      * @param array $exclude
      * @param array $eligible
      */
-    public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible) {
-        // In this application if clients send data it's because the user hacked around in console
-        $conn->close();
+    public function onPublish(ConnectionInterface $conn, $topic, $payload, array $exclude, array $eligible) {
+        // Inform the subscribers of this topic about the published message
+        $messageData = array(
+            'about' => 'publishing',
+            'message' => $payload,
+            'when'     => date('H:i:s')
+        );
+        $topic->broadcast($messageData);
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {

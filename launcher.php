@@ -1,8 +1,10 @@
 <?php
-    // Include the autoloader
-    require dirname(__DIR__) . '/ratchet/vendor/autoload.php';
+    $appDirectoryName = 'html';
 
-    use \MyApp\LoopController;
+    // Include the autoloader
+    require dirname(__DIR__) . "/$appDirectoryName/vendor/autoload.php";
+
+    use MyApp\LoopController;
 
     // Create a Wamp server wrapper
     $loopController = new LoopController();

@@ -1,52 +1,91 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script src="http://autobahn.s3.amazonaws.com/js/autobahn.min.js"></script>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script>
-    
-    var wampIp = 'put_your_server_ip_here';
-    var wampPort = '8088';
-    var wampHostname = 'ratchet.gr';
-    
-    function connectToService(){
-        // We open a websocket to service's <IP>:<port> and when the connection
-        // is established we subscribe through the callback function
-        var conn = new ab.Session('ws://'+wampIp+':'+wampPort,
-            function() {
+    <title>WAMP</title>
+
+    <script src="js/jquery-3.4.0.min.js"></script>
+    <script src="js/autobahn.js"></script>
+
+    <script>
+
+        var wampHostname = 'localhost';
+        var wampPort = '8088';
+
+        function connectToService() {
+
+            var conn; // The websocket connection variable
+
+            var onOpenWebsocketCallback = function () {
                 // Subscribe for 'newsTopic' topic. We pass a callback function
                 // to be executed when a message is broadcasted to this websocket
-                conn.subscribe('newsTopic', function(topic, data) {
+                conn.subscribe('newsTopic', function (topic, data) {
                     // Check the message content to see what this message is about
-                    if(data.about == 'subscribers'){
-                        console.log('Subscribers: ' + data.subscribers);  
+                    if (data.about == 'subscribers') {
+                        console.log('Subscribers: ' + data.subscribers);
+                    } else if (data.about == 'publishing') {
+                        console.log('Published message: ' + data.message);
                     } else {
-                        console.log('New post for "' + topic + '" ('+data.when+'): ' + data.subscribers);  
-                    }                               
+                        console.log('New post for "' + topic + '" (' + data.when + '): ' + data.subscribers);
+                    }
                 });
-            },
-            function() {
+
+                // When the user submits the form, we will send a message to the 'newsTopic' topic
+                document.querySelector("#messageForm").addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    var message = document.messageForm.message.value;
+
+                    conn.publish('newsTopic', message);
+                });
+            };
+
+            var onCloseWebsocketCallback = function () {
                 console.warn('WebSocket connection closed');
-            },
-            {'skipSubprotocolCheck': true}
-        );
-    }     
-    
-    // Make a request to get the service status
-    $.ajax({
-        url: 'http://'+wampHostname+'/enable_wamp_server.php',
-        type: 'GET',
-        dataType: 'json',
-        async: false,
-        success: function( data ) {
-            if(data.server_status == 'on'){
-                // Since the service is up, connect to receive news
-                connectToService();
-            } else {
-                alert('Monitoring service is not active!');
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            alert('Monitoring service could not be started!');                        
+            };
+
+            // We open a websocket to service's <IP>:<port> and when the connection
+            // is established we subscribe through the callback function
+            var conn = new ab.Session('ws://' + wampHostname + ':' + wampPort,
+                onOpenWebsocketCallback,
+                onCloseWebsocketCallback,
+                {'skipSubprotocolCheck': true}
+            );
         }
-    });           
-    
-</script>
+
+        // Make a request to get the service status
+        $.ajax({
+            url: 'http://' + wampHostname + '/enable_wamp_server.php',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data.server_status == 'on') {
+                    console.log(data.details);
+                    // Since the service is up, connect to receive news
+                    connectToService();
+                } else {
+                    console.log(data.details);
+                    alert('Messaging service is not active!');
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(data.details);
+                alert('Messaging service could not be started!');
+            }
+        });
+
+    </script>
+</head>
+<body>
+
+    <form id="messageForm" name="messageForm">
+        <input type="text" name="message" value="" style="width: 150px">
+        <input type="submit" value="Send">
+    </form>
+
+</body>
+</html>
+
+
