@@ -13,6 +13,13 @@
 
         var wampHostname = 'localhost';
         var wampPort = '8088';
+        var useSecure = false;
+
+        if (useSecure) {
+            var protocolScheme = 'wss://';
+        } else {
+            var protocolScheme = 'ws://';
+        }
 
         function connectToService() {
 
@@ -48,10 +55,10 @@
 
             // We open a websocket to service's <IP>:<port> and when the connection
             // is established we subscribe through the callback function
-            var conn = new ab.Session('ws://' + wampHostname + ':' + wampPort,
+            var conn = new ab.Session(protocolScheme + wampHostname + ':' + wampPort,
                 onOpenWebsocketCallback,
                 onCloseWebsocketCallback,
-                {'skipSubprotocolCheck': true}
+                {'skipSubprotocolCheck': true, 'verify_peer': false}
             );
         }
 

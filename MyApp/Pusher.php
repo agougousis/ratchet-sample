@@ -22,7 +22,7 @@ class Pusher implements WampServerInterface {
 
     /**
      * We don't call the callback function directly in case we want to do some
-     * more actions before shuting down the service.
+     * more actions before shutting down the service.
      */
     protected function close() {
         call_user_func($this->stopCallback);
@@ -117,7 +117,8 @@ class Pusher implements WampServerInterface {
     }
 
     /**
-     * Used by clients to publish messages to a topic
+     * This method will be called when a new message arrives through an established websocket.
+     * So, it will be used by clients to publish messages to a topic.
      *
      * @param ConnectionInterface $conn
      * @param Topic $topic
@@ -139,7 +140,7 @@ class Pusher implements WampServerInterface {
     }
 
     /**
-     * Published a new message to a topic's subscribers. The topic name is
+     * Publish a new message to a topic's subscribers. The topic name is
      * included in the message itself. In this application, we call this method
      * periodically through the periodic timer that we have added to the loop.
      *

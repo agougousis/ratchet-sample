@@ -23,7 +23,7 @@ The 3 main tasks that we want our server to implement are:
 * Ratchet, PHP library for setting up a websocket server (http://socketo.me/) 
 * Autobahn.js , Javascript library for WAMP clients (http://autobahn.ws/js/)
 
-_Note_: I have included the Autobahn.js library in the repository not only to make it easier for you but also because my original example was built with an older version that was not using React and it makes it easier for me to build my example. ( the newer version can be found here: http://autobahn.ws/js/)
+_Note_: I have included the Autobahn.js library in the repository not only to make it easier for you but also because my example was originally built with an older version that was not using React and it makes it easier for me to build my example. ( the newer version can be found here: http://autobahn.ws/js/)
 
 
 ### Installation steps
@@ -43,6 +43,24 @@ A yml configuration file for docker-compose has been added to help you setup the
 * Open http://your_hostname/client.html  (or http://localhost/client.html , if you are using Docker) from a browser, while you have opened the developer tools supported by this browser 
 * Check out the messages printed in the developer tools'console.
 * Open the same URL in another browser and check the console of both browsers.
+
+To test using secure(wss) websocket connection you need to do the following:
+* in client.html file, change the useSecure variable to false.
+* in launcher.php, change the $useSecure variable to true
+* replace the self-signed certificate in /ssl directory with one that works for your local machine.
+
+##### Self-signed certificate for localhost:  
+
+To create a self-signed certificate that works for localhost you can use
+mkcert. Steps:
+
+1. Install Go language
+2. Fetch mkcert repo: 
+`$ go get github.com//FiloSottile/mkcert`
+3. Create a certificate: 
+`$ go run github.com/FiloSottile/mkcert -install example.com "*.example.com" localhost 127.0.0.1`
+
+You can read a few words about mkcert here: https://blog.filippo.io/mkcert-valid-https-certificates-for-localhost/ 
 
 ### Example (using Docker)
 
